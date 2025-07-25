@@ -14,7 +14,7 @@ if(length(files)==0) {
 
 group=as.numeric(substr(files,6,6))
 
-.libPaths("/n/shared_db/misc/rcbio/rlib/3.4.1") 
+.libPaths("/n/shared_db/misc/rcbio/rlib/4.4.2") 
 
 library(edgeR)
 

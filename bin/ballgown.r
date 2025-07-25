@@ -5,7 +5,7 @@ if (length(args)==0) {
   stop("At least one argument must be supplied (sample groups, such as 1,1,1,2,2,2).\n", call.=FALSE)
 }
 
-.libPaths("/n/shared_db/misc/rcbio/rlib/3.4.1")
+.libPaths("/n/shared_db/misc/rcbio/rlib/4.4.2")
 
 #source("http://bioconductor.org/biocLite.R")
 #biocLite("ballgown", suppressUpdates=TRUE)

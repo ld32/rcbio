@@ -14,7 +14,9 @@ while getopts ":r:" o; do
     esac
 done
 
-module load bwa/0.7.15 picard/2.8.0 samtools/1.3.1
+#module load bwa/0.7.15 picard/2.8.0 samtools/1.3.1
+
+module load bwa/0.7.18 gatk/4.6.1.0
 
 echo Current loaded modules: `module list`
 
@@ -86,7 +88,7 @@ for group in `ls -v -d group*/|sed 's|[/]||g'`; do
         done
 
         #@2,1,merge
-        rm $pwdhere/bwaOut/$group$sample/accepted_hits.bam 2>/dev/null;  java -Xmx12g -jar $PICARD/picard-2.8.0.jar MergeSamFiles VALIDATION_STRINGENCY=SILENT OUTPUT=$pwdhere/bwaOut/$group$sample/accepted_hits.bam  $inputsams SORT_ORDER=coordinate && samtools index $pwdhere/bwaOut/$group$sample/accepted_hits.bam
+        rm $pwdhere/bwaOut/$group$sample/accepted_hits.bam 2>/dev/null;  gatk MergeSamFiles VALIDATION_STRINGENCY=SILENT OUTPUT=$pwdhere/bwaOut/$group$sample/accepted_hits.bam  $inputsams SORT_ORDER=coordinate && samtools index $pwdhere/bwaOut/$group$sample/accepted_hits.bam
 
     done
     

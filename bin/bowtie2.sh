@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#set -x 
+
 usage() { echo -e "Usage :\n${0##*/} [-r species_index (required if no -b. Such as: dm3, dm6, mm10, hg18, hg19 or hg38. Let us know if you need other references)] [-b bowtie2IndexWithPath(required if no -r, don't need this if -r is given)]"; exit 1;} 
 
 while getopts ":r:b:" o; do
@@ -13,7 +15,12 @@ while getopts ":r:b:" o; do
     esac
 done
 
-module load bowtie2/2.2.9 samtools/0.1.19 
+#module load bowtie2/2.2.9 samtools/0.1.19
+module load bowtie2/2.5.4 samtools/1.21
+
+[ -z "$reference" ] && [ -z "$bowtieIndex" ] && usage
+
+[ ! -z "$reference" ] && [ ! -z "$bowtieIndex" ] && usage
 
 echo Current loaded modules: `module list`
 
@@ -79,10 +86,10 @@ for group in `ls -v -d group*/|sed 's|[/]||g'`; do
 			[[ -f $group/$sample/$r2 ]] && r2="$group/$sample/$r2" || { echo -e "\n\n!!!Warning: read2 file '$r2' not exist, ignore this warning if you are working with single-end data\n\n"; r2=""; }
             read1="$read1,$group/$sample/$r1"; [ -z $r2 ] || read2="$read2,$r2"
         done
-        
-        #@1,0,bowtie2,index,sbatch -c 4 -p short -t 12:0:0 --mem 40G 
-        rm -r bowtieOut/$group$sample 2>/dev/null ; mkdir -p bowtieOut/$group$sample;  bowtie2 -p 4 -x $index -1 ${read1#,} -2 ${read2#,} | samtools view -bS - > bowtieOut/$group$sample/accepted_hits.bam && samtools sort bowtieOut/$group$sample/accepted_hits.bam bowtieOut/$group$sample/accepted_hits_sorted &&  samtools index bowtieOut/$group$sample/accepted_hits_sorted.bam
 
-    done 
+        #@1,0,bowtie2,index,sbatch -c 4 -p short -t 12:0:0 --mem 40G
+        rm -r bowtieOut/$group$sample 2>/dev/null ; mkdir -p bowtieOut/$group$sample;  bowtie2 -p 4 -x $index -1 ${read1#,} -2 ${read2#,} | samtools view -bS - > bowtieOut/$group$sample/accepted_hits.bam && samtools sort bowtieOut/$group$sample/accepted_hits.bam -o bowtieOut/$group$sample/accepted_hits_sorted.bam &&  samtools index bowtieOut/$group$sample/accepted_hits_sorted.bam
+
+    done
 done
 

@@ -146,7 +146,7 @@ for t in `cat ${1%% *}`; do
           continue
         fi
         space="$oldspace"
-        cmd="$cmd ${i%%#*}" # remove comments
+        cmd="$cmd ${i%;}" # remove ;
         cmd="${cmd# }"       # remove leading space
         
         #echo cmd1:$cmd

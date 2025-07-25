@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -x 
 usage() { echo -e "Usage :\n${0##*/} [withTPMoutput, optional] <-r species_index (required, such as mm10, hg19 or GRCz10. Let us know if you need other references)>"; exit 1;} 
 
 while getopts ":r:" o; do
@@ -13,7 +14,9 @@ while getopts ":r:" o; do
     esac
 done
 
-module load gcc/6.2.0 rsem/1.3.0 bowtie2/2.2.9  samtools/1.3.1 igvtools/2.3.88 R/3.4.1 
+#module load gcc/6.2.0 rsem/1.3.0 bowtie2/2.5.4  samtools/1.3.1 igvtools/2.3.88 R/3.4.1 
+
+module load gcc/14.2.0 bowtie2/2.5.4  samtools/1.21 R/4.4.2
 
 echo Current loaded modules: `module list`
 

@@ -26,7 +26,8 @@ done
 
 [ -z "$l" ] && [ ! -z "$s" ] && usage
 
-module load gcc/6.2.0 kallisto/0.43.1  R/3.4.1 
+#module load gcc/6.2.0 kallisto/0.43.1  R/3.4.1 
+module load  gcc/14.2.0 R/4.4.2 
 
 echo Current loaded modules: `module list`
 
@@ -42,19 +43,19 @@ if [ -f "${i}" ]; then
    index=$i
 else 
   case "$i" in
-    "GRCh38")index="$kallisto0_43_1GRCh38"
+    "GRCh38")index="$kallisto0_51_1GRCh38"
             sp=hsapiens_gene_ensembl
     ;;
     
-    "GRCm38")index="$kallisto0_43_1GRCm38"
+    "GRCm38")index="$kallisto0_51_1GRCm38"
             sp=mmusculus_gene_ensembl
     ;;
     
-    "BDGP6")index="$kallisto0_43_1BDGP6"
+    "BDGP6")index="$kallisto0_51_1BDGP6"
             sp=dmelanogaster_gene_ensembl
     ;;
     
-    "GRCz10")index="$kallisto0_43_1GRCz10"
+    "GRCz10")index="$kallisto0_51_1GRCz10"
             sp=drerio_gene_ensembl
     ;;
   

@@ -1,6 +1,6 @@
 #!/bin/env Rscript
 
-.libPaths("/n/shared_db/misc/rcbio/rlib/3.4.1")
+.libPaths("/n/shared_db/misc/rcbio/rlib/4.4.2")
 
 #source("http://bioconductor.org/biocLite.R")
 #biocLite("edgeR", suppressUpdates=TRUE)

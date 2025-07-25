@@ -27,7 +27,10 @@ done
 
 [ -z "$l" ] && echo Please give read length && usage 
 
-module load  star/2.5.4a  samtools/1.3.1 picard/2.8.0
+#module load  star/2.5.4a  samtools/1.3.1 picard/2.8.0
+
+module load  samtools/1.21 gatk/4.6.1.0
+
 echo Current loaded modules: `module list`
 
 # set up paths 
@@ -125,7 +128,7 @@ for group in `ls -v -d group*`; do
         mkdir starOut/$group$sample
         
         #@2,1,merge,,sbatch -p short -c 1 -t 0-4:0 --mem 10G  
-        java -Xmx12g -jar $PICARD/picard-2.8.0.jar MergeSamFiles VALIDATION_STRINGENCY=SILENT OUTPUT=starOut/$group$sample/accepted_hits.bam  $inputsams SORT_ORDER=coordinate && samtools index starOut/$group$sample/accepted_hits.bam
+        gatk MergeSamFiles VALIDATION_STRINGENCY=SILENT OUTPUT=starOut/$group$sample/accepted_hits.bam  $inputsams SORT_ORDER=coordinate && samtools index starOut/$group$sample/accepted_hits.bam
         
         #break
     done 

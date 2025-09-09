@@ -28,6 +28,8 @@ done
 
 #module load gcc/6.2.0 kallisto/0.43.1  R/3.4.1 
 module load  gcc/14.2.0 R/4.4.2 
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv
 
 echo Current loaded modules: `module list`
 

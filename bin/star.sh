@@ -29,7 +29,9 @@ done
 
 #module load  star/2.5.4a  samtools/1.3.1 picard/2.8.0
 
-module load  samtools/1.21 gatk/4.6.1.0
+module load gatk/4.6.1.0
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv 
 
 echo Current loaded modules: `module list`
 
@@ -123,9 +125,9 @@ for group in `ls -v -d group*`; do
             inputsams="$inputsams INPUT=starOut/$group$sample$readgroup-star.p2/Aligned.out.sam"
             
         done
-        
+         
         cd $pwdhere           
-        mkdir starOut/$group$sample
+        mkdir -p starOut/$group$sample
         
         #@2,1,merge,,sbatch -p short -c 1 -t 0-4:0 --mem 10G  
         gatk MergeSamFiles VALIDATION_STRINGENCY=SILENT OUTPUT=starOut/$group$sample/accepted_hits.bam  $inputsams SORT_ORDER=coordinate && samtools index starOut/$group$sample/accepted_hits.bam

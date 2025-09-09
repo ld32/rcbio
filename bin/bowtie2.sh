@@ -16,7 +16,8 @@ while getopts ":r:b:" o; do
 done
 
 #module load bowtie2/2.2.9 samtools/0.1.19
-module load bowtie2/2.5.4 samtools/1.21
+module load bowtie2/2.5.4 conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv
 
 [ -z "$reference" ] && [ -z "$bowtieIndex" ] && usage
 

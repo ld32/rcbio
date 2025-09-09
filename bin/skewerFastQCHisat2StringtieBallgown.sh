@@ -21,6 +21,9 @@ done
  
 #module load gcc/6.2.0 skewer/0.2.2 fastqc/0.11.5 hisat2/2.1.0 stringtie/1.3.3b samtools/1.3.1 R/3.4.1  
 
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv
+
 echo Current loaded modules: `module list`
 
 # set up paths 

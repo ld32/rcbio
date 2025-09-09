@@ -30,6 +30,9 @@ done
 #module load  star/2.5.4a  samtools/1.3.1 picard/2.8.0
 
 module load  samtools/1.21 gatk/4.6.1.0
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv
+
 echo Current loaded modules: `module list`
 
 # set up paths 

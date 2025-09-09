@@ -161,23 +161,23 @@ for t in `cat ${1%% *}`; do
         #echo cmd3 is $cmd
         
         cloper[$step]=$loper
-        sameloop=no
-        IFS=' '
-        if [[ "$de" == "0" ]]; then
-            sameloop=""
-        elif [[ "$de" == *\.* ]]; then
+        # sameloop=no
+        # IFS=' '
+        # if [[ "$de" == "0" ]]; then
+        #     sameloop=""
+        # elif [[ "$de" == *\.* ]]; then
             
-            for dep in ${de//\./ }; do
-                if [[ ${cloper[$step]} == ${cloper[$dep]} ]]; then
-                    sameloop=""
-                else
-                    sameloop="no"
-                    break
-                fi
-            done
-        elif [[ ${cloper[$step]} == ${cloper[$de]} ]]; then
-            sameloop=""
-        fi
+        #     for dep in ${de//\./ }; do
+        #         if [[ ${cloper[$step]} == ${cloper[$dep]} ]]; then
+        #             sameloop=""
+        #         else
+        #             sameloop="no"
+        #             break
+        #         fi
+        #     done
+        # elif [[ ${cloper[$step]} == ${cloper[$de]} ]]; then
+        #     sameloop=""
+        # fi
                       
         #echo "debug: ${cloper[$step]} ${cloper[$de]} .$sameloop. " >> $run
         [ "$3" == "useTmp" ] && useTmp="reference: $ref"
@@ -186,15 +186,29 @@ for t in `cat ${1%% *}`; do
         echo "${space}flag=\${flag//\//_}" >> $run   # replace path / to _ 
         
         echo -e "${space}deps=\"\""  >> $run
-        if [[ "$de" != "0" ]]; then
-            if [[ "$de" == *\.* ]]; then
-                for dep in ${de//\./ }; do
-                    [ -z $sameloop ] && echo "${space}deps=\"\$deps \${jobID[$dep]}\"" >> $run || echo "${space}deps=\"\$deps \${jobIDs[$dep]}\"" >> $run
-                done
-            else    
-                [ -z $sameloop ] && echo "${space}deps=\"\${jobID[$de]}\""  >> $run || echo "${space}deps=\"\${jobIDs[$de]}\""  >> $run 
+        IFS=' ' # xxx
+        if [[ "$de" == *\.* ]]; then
+            for dep in ${de//\./ }; do
+                l=$(expr length ${cloper[$step]} 2>/dev/null) || l=0
+                ll=$(expr length ${cloper[$dep]} 2>/dev/null) || ll=0
+                if [ $l -eq $ll ]; then
+                    echo "${space}[ -z \"\${jobID[$dep]}\" ] || deps=\"\$deps:\${jobID[$dep]}\"" >> $run 
+                else
+                    echo "${space}[ -z \"\${jobIDs[$dep]}\" ] || deps=\"\$deps:\${jobIDs[$dep]}\"" >> $run
+                    echo "${space}depWasUsed[$dep]=\"yes\"" >> $run 
+                fi          
+            done 
+
+        else
+            l=$(expr length ${cloper[$step]} 2>/dev/null) || l=0
+            ll=$(expr length ${cloper[$de]} 2>/dev/null) || ll=0
+            if [ $l -eq $ll ]; then 
+                echo "${space}[ -z \"\${jobID[$de]}\" ] || deps=\":\${jobID[$de]}\""  >> $run
+            else     
+                echo "${space}[ -z \"\${jobIDs[$de]}\" ] || deps=\":\${jobIDs[$de]}\""  >> $run
+                echo "${space}depWasUsed[$de]=\"yes\"" >> $run
             fi
-        fi 
+        fi     
                 
         # escape double quota. bsub does not need this? not sure
         cmd=${cmd//\"/\\\\\"}
@@ -212,7 +226,13 @@ for t in `cat ${1%% *}`; do
        
         [[ "$3" == "useTmp" && ! -z "$ref" ]] && echo "${space}setPathBack $ref" >> $run 
         #echo "echo id is: \$id ">> $run
-        
+
+        # clear jobIDs if the ids were used in the previous downstream step 
+        echo "${space}    if [ ! -z \"\${depWasUsed[$step]}\" ]; then" >> $run
+        echo "${space}        jobIDs[$step]=''" >> $run
+        echo "${space}        depWasUsed[$step]=\"\"" >> $run
+        echo "${space}    fi" >> $run
+
         echo "${space}if [ -z \"\$id\" ]; then"  >> $run
         echo "${space}    echo  job \$flag is not submitted"  >> $run
         echo "${space}    jobID[$step]=\"\"" >> $run 
@@ -222,16 +242,17 @@ for t in `cat ${1%% *}`; do
         echo "${space}    alljobs=\"\$alljobs \$id\"" >> $run 
         echo "${space}    printf \"%-10s  %-20s  %-10s\n\" \$id \$deps \$flag >> \$cwd/alljobs.jid"  >> $run 
         
-        # tell this is out of the loop for the depending job (de), so that we clear the job id list for the next step with depends on 'de'
-        if [[ "$de" == *\.* ]]; then
-                for dep in ${de//\./ }; do
-                    [ -z $sameloop ] && echo "${space}    startNewLoop[$dep]=\"no\""  >> $run || echo "    ${space}startNewLoop[$dep]=\"\""  >> $run 
-                done
-        else    
-                [ -z $sameloop ] && echo "${space}    startNewLoop[$de]=\"no\""  >> $run || echo "    ${space}startNewLoop[$de]=\"\""  >> $run 
-        fi
+        # # tell this is out of the loop for the depending job (de), so that we clear the job id list for the next step with depends on 'de'
+        # if [[ "$de" == *\.* ]]; then
+        #         for dep in ${de//\./ }; do
+        #             [[ $dep == 0 ]] && continue
+        #             [ -z $sameloop ] && echo "${space}    startNewLoop[$dep]=\"no\""  >> $run || echo "    ${space}startNewLoop[$dep]=\"\""  >> $run 
+        #         done
+        # elif [[ $de != 0 ]]; then
+        #         [ -z $sameloop ] && echo "${space}    startNewLoop[$de]=\"no\""  >> $run || echo "    ${space}startNewLoop[$de]=\"\""  >> $run 
+        # fi
         
-        echo "${space}    [ -z \${startNewLoop[$step]} ] && jobIDs[$step]=\"\" && startNewLoop[$step]=\"no\" " >> $run 
+        # echo "${space}    [ -z \${startNewLoop[$step]} ] && jobIDs[$step]=\"\" && startNewLoop[$step]=\"no\" " >> $run 
         echo "${space}    jobID[$step]=\$id"  >> $run
         echo "${space}    jobIDs[$step]=\${jobIDs[$step]}.\$id"  >> $run
         

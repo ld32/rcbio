@@ -17,6 +17,8 @@ done
 #module load bwa/0.7.15 picard/2.8.0 samtools/1.3.1
 
 module load bwa/0.7.18 gatk/4.6.1.0
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv
 
 echo Current loaded modules: `module list`
 

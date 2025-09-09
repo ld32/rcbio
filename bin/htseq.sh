@@ -33,7 +33,9 @@ done
 
 [ -z "$s" ] && { echo Please provide the strand for option -s;  usage; }
 
-module load gcc/6.2.0  python/2.7.12  htseq/0.9.1 samtools/0.1.19
+#module load gcc/6.2.0  python/2.7.12  htseq/0.9.1 samtools/0.1.19
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv 
 
 echo Current loaded modules: `module list`
 
@@ -93,11 +95,13 @@ for group in `ls -v -d group*/|sed 's|[/]||g'`; do
         [ -f $i ] || { echo bam file not find: $i; exit 1; }
         
         #@1,0,htseq,,sbatch -p short -t 12:0:0 --mem 8G
-        samtools view -bf 1 $i > $i.pe.bam && samtools sort -n $i.pe.bam $i.sorted && htseq-count -s $s -f bam $i.sorted.bam $gtf > $i.read.count.txt
+        samtools view -bf 1 $i > $i.pe.bam && samtools sort -n $i.pe.bam -o $i.sorted.bam && htseq-count -s $s -f bam $i.sorted.bam $gtf > $i.read.count.txt
+
+
     done
 done
 
-module load R/3.4.1
+module load R/4.4.2
 
 cd $pwdhere
 

@@ -34,6 +34,8 @@ done
 
 #module load  gcc/6.2.0 star/2.5.4a  samtools/1.3.1 picard/2.8.0  skewer/0.2.2 fastqc/0.11.5
 
+module load conda/miniforge3
+conda activate /n/shared_db/misc/rcbio/rcbioEnv
 module load  gatk/4.6.1.0
 
 echo Current loaded modules: `module list`

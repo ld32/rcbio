@@ -23,3 +23,4 @@ y=readDGE(files, path=args[1], group=group,labels=substr(dirname(files),1, 1000)
 write.table(y$count, file="rawCount.txt", quote=FALSE, sep="\t")
 
 cat('Done. Raw count is in file rawCount.txt\n')
+

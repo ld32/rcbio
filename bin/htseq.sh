@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#set -x
+
 usage() { echo -e "Usage :\n${0##*/} <-p path_of_alignment, such as: bowtieOut, bwaOut or starOut, required> [-r species_index (required if no -g. Such as: dm3, dm6, mm10, hg18, hg19 or hg38. Let us know if you need other references)] [-g .gtf file with full path (required if no -r, don't need this if -r is given)] <-s strand(yes,no,reverse)>"; exit 1;}
 
 while getopts ":p:r:s:g:" o; do
@@ -35,7 +37,7 @@ done
 
 #module load gcc/6.2.0  python/2.7.12  htseq/0.9.1 samtools/0.1.19
 module load conda/miniforge3
-conda activate /n/shared_db/misc/rcbio/rcbioEnv 
+conda activate /n/shared_db/misc/rcbio/htseqEnv 
 
 echo Current loaded modules: `module list`
 
@@ -101,7 +103,7 @@ for group in `ls -v -d group*/|sed 's|[/]||g'`; do
     done
 done
 
-module load R/4.4.2
+module load gcc/14.2.0 R/4.4.2
 
 cd $pwdhere
 
